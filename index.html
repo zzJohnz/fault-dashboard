@@ -234,7 +234,7 @@ border-radius:6px;padding:8px 16px;color:#e6edf3;font-size:12px;display:none;z-i
   <div class="pg" id="pg"></div>
 </div>
 
-<div class="ft">故障保留管理看板 - Generated 2026-08-10 13:48 - 数据: 故障保留.XLSX (498 条)</div>
+<div class="ft">故障保留管理看板 - Generated 2026-08-10 13:56 - 数据: 故障保留.XLSX (498 条)</div>
 
 <script>
 // ========== 数据 ==========
@@ -438,7 +438,7 @@ function refreshAll() {
   document.getElementById('k_risk').innerHTML = ov + '<span style="font-size:16px"> / </span><span style="font-size:20px">' + hi + '</span>';
   document.getElementById('k_mid').textContent = md;
   document.getElementById('k_crit').textContent = cr;
-  document.getElementById('k_norm').textContent = nm;
+  document.getElementById('k_norm').textContent = total - cr;   // 非关键系统数
   document.getElementById('gtot').textContent = total;
 
   // 风险进度条
@@ -479,8 +479,12 @@ function refreshAll() {
   pieR('c3', riskPie);
   bar('c4', {cats: levelPie.map(function(d){return d.name;}), vals: levelPie.map(function(d){return d.value;})});
   pie('c5', reasonPie);
+  var critBy = {}; critical.forEach(function(d){ critBy[d.name] = d.value; });
   gbar('c7', ['是','否'], [
-    {name: '是否关键系统', data: critical.map(function(d){return d.value;}), color: '#f85149'}
+    {name: '是否关键系统', data: [
+      {value: critBy['是']||0, itemStyle:{color:'#d29922'}},   // 关键系统 橙
+      {value: critBy['否']||0, itemStyle:{color:'#3fb950'}}    // 非关键系统 绿
+    ]}
   ]);
   heat('c8', cross1);
   heat('c9', cross2);
