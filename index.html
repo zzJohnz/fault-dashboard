@@ -234,7 +234,7 @@ border-radius:6px;padding:8px 16px;color:#e6edf3;font-size:12px;display:none;z-i
   <div class="pg" id="pg"></div>
 </div>
 
-<div class="ft">故障保留管理看板 - Generated 2026-08-10 13:35 - 数据: 故障保留.XLSX (498 条)</div>
+<div class="ft">故障保留管理看板 - Generated 2026-08-10 13:48 - 数据: 故障保留.XLSX (498 条)</div>
 
 <script>
 // ========== 数据 ==========
@@ -493,6 +493,7 @@ function refreshAll() {
 // ========== 图表 ==========
 var CL = ['#58a6ff','#3fb950','#d29922','#f85149','#a371f7','#79c0ff','#56d364','#e3b341','#ff7b72','#d2a8ff'];
 var RL = ['#f85149','#d29922','#79c0ff','#3fb950'];
+var RISK_COLOR = {Overdue:'#f85149', HighRisk:'#d29922', MidRisk:'#79c0ff', Normal:'#3fb950', Unknown:'#ffffff'};
 
 function getC(id) {
   if (!charts[id]) charts[id] = echarts.init(document.getElementById(id));
@@ -521,7 +522,7 @@ function pieR(id, data) {
     series: [{type:'pie', radius:['35%','65%'], center:['30%','50%'],
       itemStyle:{borderRadius:4, borderColor:'#0d1117', borderWidth:1},
       label:{show:false}, emphasis:{label:{show:true, fontSize:12}},
-      data: data}]
+      data: data.map(function(d){ return {name:d.name, value:d.value, itemStyle:{color: RISK_COLOR[d.name] || '#888780'}}; })}]
   }, true);
 }
 
