@@ -266,7 +266,7 @@ tbody tr:hover{background:#f5f5f5}
     <div class="pagination" id="pg"></div>
   </div>
 
-  <div class="footer">故障保留管理看板 — Generated 2026-08-11 15:47 — 数据源：故障保留.XLSX</div>
+  <div class="footer">故障保留管理看板 — Generated 2026-08-11 16:20 — 数据源：故障保留.XLSX</div>
 </div>
 
 <script>
@@ -292,14 +292,34 @@ function buildDDs() {
     else if(cfg.key==='cabin'){ keys=['是','否']; }
     else{ keys.sort(); }
     var dd = document.getElementById(cfg.ddid);
-    var html = '<div class="dd-actions"><button onclick="selAll(''+cfg.key+'',true)">全选</button><button onclick="selAll(''+cfg.key+'',false)">清空</button></div>';
+    dd.innerHTML = '';
+    var actions = document.createElement('div');
+    actions.className = 'dd-actions';
+    var bAll = document.createElement('button');
+    bAll.textContent = '全选';
+    bAll.onclick = function(){ selAll(cfg.key, true); };
+    var bNone = document.createElement('button');
+    bNone.textContent = '清空';
+    bNone.onclick = function(){ selAll(cfg.key, false); };
+    actions.appendChild(bAll); actions.appendChild(bNone);
+    dd.appendChild(actions);
     keys.forEach(function(k){
       var lbl = (cfg.risk && RISK_NAME[k]) ? RISK_NAME[k] : k;
-      html += '<label class="opt" onclick="event.stopPropagation()">'+
-        '<input type="checkbox" data-key="'+cfg.key+'" data-val="'+k.replace(/"/g,'&quot;')+'" onchange="toggleSel(''+cfg.key+'',''+k.replace(/'/g,"\'")+'',this.checked)">'+
-        '<span>'+lbl+'</span><span class="cnt">'+(opts[k]||0)+'</span></label>';
+      var label = document.createElement('label');
+      label.className = 'opt';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.setAttribute('data-key', cfg.key);
+      cb.value = k;
+      cb.onchange = (function(val){ return function(){ toggleSel(cfg.key, val, cb.checked); }; })(k);
+      var sp = document.createElement('span');
+      sp.textContent = lbl;
+      var cnt = document.createElement('span');
+      cnt.className = 'cnt';
+      cnt.textContent = (opts[k]||0);
+      label.appendChild(cb); label.appendChild(sp); label.appendChild(cnt);
+      dd.appendChild(label);
     });
-    dd.innerHTML = html;
   });
 }
 function toggleSel(key,val,checked){ if(checked) SEL[key].add(val); else SEL[key].delete(val); updateTrigger(key); applyF(); }
