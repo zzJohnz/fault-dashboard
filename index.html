@@ -63,7 +63,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 .header .logo::before{content:"";display:inline-block;width:28px;height:28px;background:linear-gradient(135deg,#1890ff,#36cfc9);border-radius:6px}
 .header .meta{display:flex;gap:24px;color:#a6adb4;font-size:13px}
 .header .meta b{color:#fff;font-weight:500}
-.container{padding:20px 24px;max-width:1600px;margin:0 auto}
+.container{padding:0;max-width:1600px;margin:0 auto}
+.layout{display:flex;min-height:calc(100vh - 64px)}
+.sidebar{width:200px;background:#001529;color:#fff;flex-shrink:0;padding:12px 0}
+.sidebar a{display:flex;align-items:center;gap:10px;padding:12px 24px;color:#a6adb4;text-decoration:none;font-size:14px;transition:all .2s}
+.sidebar a:hover{color:#fff;background:rgba(255,255,255,.05)}
+.sidebar a.active{color:#fff;background:#1890ff}
+.sidebar a .icon{width:18px;text-align:center}
+.main{flex:1;padding:20px 24px;max-width:calc(100% - 200px);min-width:0;background:var(--bg)}
 .filter-bar{background:var(--card);padding:16px 20px;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;display:flex;flex-wrap:wrap;align-items:center;gap:16px}
 .filter-group{display:flex;flex-direction:column;gap:4px;min-width:140px}
 .filter-group .lab{font-size:12px;color:var(--text3)}
@@ -150,125 +157,29 @@ tbody tr:hover{background:#f5f5f5}
   </div>
 </div>
 
-<div class="container">
-  <div class="filter-bar">
-    <div class="filter-group">
-      <span class="lab">开始申请日期</span>
-      <input type="date" id="d1" value="2026-01-01" onchange="applyF()">
-    </div>
-    <div class="filter-group">
-      <span class="lab">结束申请日期</span>
-      <input type="date" id="d2" value="2026-08-12" onchange="applyF()">
-    </div>
-    <div class="filter-group pos-rel">
-      <span class="lab">机型</span>
-      <div class="dd-trigger" id="trig_ac" onclick="toggleDD('ac')">全部 <span style="color:#bfbfbf">▼</span></div>
-      <div class="dd-panel" id="dd_ac"></div>
-    </div>
-    <div class="filter-group pos-rel">
-      <span class="lab">指定机号单位</span>
-      <div class="dd-trigger" id="trig_base" onclick="toggleDD('base')">全部 <span style="color:#bfbfbf">▼</span></div>
-      <div class="dd-panel" id="dd_base"></div>
-    </div>
-    <div class="filter-group pos-rel">
-      <span class="lab">保留类型</span>
-      <div class="dd-trigger" id="trig_level" onclick="toggleDD('level')">全部 <span style="color:#bfbfbf">▼</span></div>
-      <div class="dd-panel" id="dd_level"></div>
-    </div>
-    <div class="filter-group pos-rel">
-      <span class="lab">风险</span>
-      <div class="dd-trigger" id="trig_risk" onclick="toggleDD('risk')">全部 <span style="color:#bfbfbf">▼</span></div>
-      <div class="dd-panel" id="dd_risk"></div>
-    </div>
-    <div class="filter-group pos-rel">
-      <span class="lab">是否客舱类</span>
-      <div class="dd-trigger" id="trig_cabin" onclick="toggleDD('cabin')">全部 <span style="color:#bfbfbf">▼</span></div>
-      <div class="dd-panel" id="dd_cabin"></div>
-    </div>
-    <div class="filter-actions">
-      <button class="btn btn-primary" onclick="applyF()">查询</button>
-      <button class="btn btn-default" onclick="resetF()">重置</button>
-    </div>
+<div class="layout">
+  <div class="sidebar">
+    <a href="index.html" class="active"><span class="icon">🏠</span>首页</a>
+    <a href="dashboard.html" class=""><span class="icon">📊</span>保留故障看板</a>
   </div>
-  <div class="filter-hint" id="fhint"></div>
-
-  <div class="kpi-row">
-    <div class="kpi-card k1">
-      <div class="tit">总故障保留数</div>
-      <div class="num" id="k_total">457</div>
-      <div class="sub">当前筛选结果</div>
-    </div>
-    <div class="kpi-card k2">
-      <div class="tit">平均处理时长</div>
-      <div class="num" id="k_avg">10.7<small>h</small></div>
-      <div class="sub">填写到处理完毕</div>
-    </div>
-    <div class="kpi-card k3">
-      <div class="tit">已超期 / 高风险</div>
-      <div class="num" id="k_risk">1<small>/</small><span style="font-size:22px" id="k_high">26</span></div>
-      <div class="sub">中风险 <span id="k_mid" style="color:#d46b08">43</span></div>
-    </div>
-    <div class="kpi-card k4">
-      <div class="tit">是否关键系统</div>
-      <div class="num" id="k_crit">20</div>
-      <div class="sub">正常 <span id="k_norm">387</span></div>
-    </div>
-  </div>
-
-  <div class="card" style="margin-bottom:16px">
-    <div class="hd"><div class="tt">每日保留趋势（按审批日期）</div><span class="badge">审批日期</span></div>
-    <div class="chart" id="c0" style="height:300px"></div>
-  </div>
-
-  <div class="chart-grid">
-    <div class="card">
-      <div class="hd"><div class="tt">机型分布</div><span class="badge" id="bc1">占比</span></div>
-      <div class="chart-t" id="c1"></div>
-    </div>
-    <div class="card">
-      <div class="hd"><div class="tt">指定机号单位分布</div><span class="badge" id="bc2">占比</span></div>
-      <div class="chart-t" id="c2"></div>
-    </div>
-    <div class="card">
-      <div class="hd"><div class="tt">超期风险分布</div><span class="badge">预警</span></div>
-      <div class="chart-t" id="c3"></div>
-    </div>
-  </div>
-
-  <div class="chart-grid">
-    <div class="card">
-      <div class="hd"><div class="tt">保留类型分布</div><span class="badge">A=最高 D=最低</span></div>
-      <div class="chart" id="c4"></div>
-    </div>
-    <div class="card">
-      <div class="hd"><div class="tt">保留原因分布</div><span class="badge">原因</span></div>
-      <div class="chart" id="c5"></div>
-    </div>
-    <div class="card">
-      <div class="hd"><div class="tt">是否关键系统</div><span class="badge">是/否</span></div>
-      <div class="chart" id="c7"></div>
-    </div>
-  </div>
-
-  <div class="card table-card">
-    <div class="hd">
-      <div class="tt">故障保留明细（全部原始字段）</div>
-      <div class="table-tools">
-        <input type="text" id="tsearch" placeholder="全局搜索..." oninput="setSearch(this.value)">
-        <span class="badge" id="tc">共 457 条</span>
+  <div class="main">
+    <div class="container">
+      <div class="card">
+        <div class="hd"><div class="tt">每日保留趋势（按审批日期）</div><span class="badge">审批日期</span></div>
+        <div class="chart" id="c0" style="height:420px"></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="hd"><div class="tt">数据概览</div><span class="badge">汇总</span></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:8px">
+          <div class="kpi-card k1"><div class="tit">总保留数</div><div class="num">7197</div><div class="sub">全部原始记录</div></div>
+          <div class="kpi-card k2"><div class="tit">审批通过</div><div class="num">457</div><div class="sub">用于图表/KPI</div></div>
+          <div class="kpi-card k3"><div class="tit">客舱类</div><div class="num">4935</div><div class="sub">全部原始记录</div></div>
+          <div class="kpi-card k4"><div class="tit">系统类</div><div class="num">2262</div><div class="sub">全部原始记录</div></div>
+        </div>
       </div>
     </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr id="thr"></tr></thead>
-        <tbody id="tb"></tbody>
-      </table>
-    </div>
-    <div class="table-tip" id="ttip"></div>
-    <div class="pagination" id="pg"></div>
+    <div class="footer">维修计划辅助决策 — Generated 2026-08-12 10:51 — 数据源：故障保留.XLSX</div>
   </div>
-
-  <div class="footer">维修计划辅助决策 — Generated 2026-08-12 10:30 — 数据源：故障保留.XLSX</div>
 </div>
 
 <script>
@@ -277,176 +188,6 @@ var DATA_FULL = [{"ddf": "DDF-2026-B222J-0006", "plane": "B222J", "type": "B777"
 var DETAIL_COLS = ["状态", "是否有重复性M项工作", "是否有运行限制要求", "是否关键系统", "机号", "指定机号单位", "执管基地", "保留故障单号", "申请日期", "首次保留起始日期", "保留类型", "截止日期", "故障报告", "保留原因", "保留依据", "提交日期", "机型", "提交时间", "ATA章节号", "申请提交人", "撤销地点", "是否延期", "是否头等/公务舱类", "生产准备状态", "审批类型", "审批人", "审批日期", "机务维护程序（M）", "站点", "保留循环", "保留小时", "航班号", "飞行日期", "是否客舱类", "退回人", "退回日期", "退回原因", "退回时刻", "已转任务"];
 var GEN_DATE = "2026-08-12";
 var charts = {};
-var pg = 1, PS = 12, fDT = [];
-var SEL = { ac:new Set(), base:new Set(), level:new Set(), risk:new Set(), cabin:new Set() };
-var searchText='', sortCol=null, sortDir=1;
-var sortIndEls={};
-var FIELDS = [
-  {key:'ac', field:'ac', label:'机型', ddid:'dd_ac', trig:'trig_ac'},
-  {key:'base', field:'base', label:'指定机号单位', ddid:'dd_base', trig:'trig_base'},
-  {key:'level', field:'level', label:'保留类型', ddid:'dd_level', trig:'trig_level'},
-  {key:'risk', field:'risk', label:'风险', ddid:'dd_risk', trig:'trig_risk', risk:true},
-  {key:'cabin', field:'cabin', label:'是否客舱类', ddid:'dd_cabin', trig:'trig_cabin'}
-];
-
-function buildDDs() {
-  FIELDS.forEach(function(cfg) {
-    var opts = {};
-    DATA.forEach(function(r){ var v=r[cfg.field]; if(v) opts[v]=(opts[v]||0)+1; });
-    var keys = Object.keys(opts);
-    if(cfg.risk){ var order=['Overdue','HighRisk','MidRisk','Normal']; keys=order.filter(function(k){return opts[k]}).concat(keys.filter(function(k){return order.indexOf(k)<0;})); }
-    else if(cfg.key==='cabin'){ keys=['客舱类','系统类']; }
-    else{ keys.sort(); }
-    var dd = document.getElementById(cfg.ddid);
-    dd.innerHTML = '';
-    var actions = document.createElement('div');
-    actions.className = 'dd-actions';
-    var bAll = document.createElement('button');
-    bAll.textContent = '全选';
-    bAll.onclick = function(){ selAll(cfg.key, true); };
-    var bNone = document.createElement('button');
-    bNone.textContent = '清空';
-    bNone.onclick = function(){ selAll(cfg.key, false); };
-    actions.appendChild(bAll); actions.appendChild(bNone);
-    dd.appendChild(actions);
-    keys.forEach(function(k){
-      var lbl = (cfg.risk && RISK_NAME[k]) ? RISK_NAME[k] : k;
-      var label = document.createElement('label');
-      label.className = 'opt';
-      var cb = document.createElement('input');
-      cb.type = 'checkbox';
-      cb.setAttribute('data-key', cfg.key);
-      cb.value = k;
-      cb.onchange = (function(val){ return function(){ toggleSel(cfg.key, val, cb.checked); }; })(k);
-      var sp = document.createElement('span');
-      sp.textContent = lbl;
-      var cnt = document.createElement('span');
-      cnt.className = 'cnt';
-      cnt.textContent = (opts[k]||0);
-      label.appendChild(cb); label.appendChild(sp); label.appendChild(cnt);
-      dd.appendChild(label);
-    });
-  });
-}
-function toggleSel(key,val,checked){ if(checked) SEL[key].add(val); else SEL[key].delete(val); updateTrigger(key); applyF(); }
-function selAll(key,all){
-  SEL[key].clear();
-  if(all){ var cfg=FIELDS.find(function(c){return c.key===key}); DATA.forEach(function(r){ var v=r[cfg.field]; if(v) SEL[key].add(v); }); }
-  document.querySelectorAll('input[data-key="'+key+'"]').forEach(function(i){ i.checked=all; });
-  updateTrigger(key); applyF();
-}
-function updateTrigger(key){
-  var cfg=FIELDS.find(function(c){return c.key===key});
-  var el=document.getElementById(cfg.trig);
-  var n=SEL[key].size;
-  if(n===0){ el.innerHTML='全部 <span style="color:#bfbfbf">▼</span>'; el.classList.remove('active'); }
-  else if(n===1){ var v=[...SEL[key]][0]; var disp=(cfg.risk && RISK_NAME[v])?RISK_NAME[v]:v; el.innerHTML=(disp.length>8?disp.substring(0,8)+'..':disp)+' <span style="color:#1890ff">▼</span>'; el.classList.add('active'); }
-  else{ el.innerHTML='已选 '+n+' 项 <span style="color:#1890ff">▼</span>'; el.classList.add('active'); }
-}
-function toggleDD(key){
-  FIELDS.forEach(function(c){ if(c.key!==key) document.getElementById(c.ddid).classList.remove('open'); });
-  document.getElementById('dd_'+key).classList.toggle('open');
-}
-document.addEventListener('click',function(e){ if(!e.target.closest('.filter-group')) FIELDS.forEach(function(c){ document.getElementById(c.ddid).classList.remove('open'); }); });
-
-function filterBase(list){
-  var d1=document.getElementById('d1').value, d2=document.getElementById('d2').value;
-  return list.filter(function(x){
-    if(SEL.ac.size>0 && !SEL.ac.has(x.ac)) return false;
-    if(SEL.base.size>0 && !SEL.base.has(x.base)) return false;
-    if(SEL.level.size>0 && !SEL.level.has(x.level)) return false;
-    if(SEL.risk.size>0 && !SEL.risk.has(x.risk)) return false;
-    if(SEL.cabin.size>0 && !SEL.cabin.has(x.cabin)) return false;
-    if(d1 && x.apply_date && x.apply_date<d1) return false;
-    if(d2 && x.apply_date && x.apply_date>d2) return false;
-    return true;
-  });
-}
-function getFiltered(){ return filterBase(DATA); }
-function applyF(){
-  fDT=getFiltered(); pg=1; refreshAll();
-  var parts=[];
-  var d1=document.getElementById('d1').value, d2=document.getElementById('d2').value;
-  if(d1||d2) parts.push('申请日期 '+ (d1||'...')+' 至 '+(d2||'...'));
-  if(SEL.ac.size>0) parts.push('机型 '+SEL.ac.size+'项');
-  if(SEL.base.size>0) parts.push('指定机号单位 '+SEL.base.size+'项');
-  if(SEL.level.size>0) parts.push('保留类型 '+SEL.level.size+'项');
-  if(SEL.risk.size>0) parts.push('风险 '+SEL.risk.size+'项');
-  if(SEL.cabin.size>0) parts.push('客舱 '+SEL.cabin.size+'项');
-  document.getElementById('fhint').textContent = parts.length ? '已筛选：'+parts.join(' + ')+' | 命中 '+fDT.length+' 条' : '显示全部 '+fDT.length+' 条';
-}
-function resetF(){
-  SEL.ac.clear(); SEL.base.clear(); SEL.level.clear(); SEL.risk.clear(); SEL.cabin.clear();
-  document.querySelectorAll('input[data-key]').forEach(function(i){ i.checked=false; });
-  FIELDS.forEach(function(c){ updateTrigger(c.key); });
-  document.getElementById('d1').value='2026-01-01';
-  document.getElementById('d2').value=GEN_DATE;
-  document.getElementById('tsearch').value='';
-  searchText=''; sortCol=null; sortDir=1; updateSortIndicators();
-  fDT=getFiltered(); pg=1; refreshAll();
-  document.getElementById('fhint').textContent='已重置筛选';
-}
-
-function countBy(list,key){
-  var m={};
-  list.forEach(function(x){ var k=x[key]||'Unknown'; m[k]=(m[k]||0)+1; });
-  return Object.entries(m).map(function(e){return {name:e[0],value:e[1]};}).sort(function(a,b){return b.value-a.value;});
-}
-
-function refreshAll(){
-  var total=fDT.length;
-  var sum=0, cnt=0; fDT.forEach(function(x){ if(x.hours>0){ sum+=x.hours; cnt++; } });
-  var avg = cnt>0 ? (sum/total).toFixed(1) : '0.0';
-  var ov=0,hi=0,md=0,nm=0,cr=0;
-  fDT.forEach(function(x){
-    if(x.risk==='Overdue') ov++; else if(x.risk==='HighRisk') hi++; else if(x.risk==='MidRisk') md++; else nm++;
-    if(x.critical==='是') cr++;
-  });
-  document.getElementById('k_total').textContent=total;
-  document.getElementById('k_avg').innerHTML=avg+'<small>h</small>';
-  document.getElementById('k_risk').innerHTML=ov+'<small>/</small><span style="font-size:22px" id="k_high">'+hi+'</span>';
-  document.getElementById('k_mid').textContent=md;
-  document.getElementById('k_crit').textContent=cr;
-  document.getElementById('k_norm').textContent=total-cr;
-  document.getElementById('meta-total').textContent=total;
-
-  var typePie=countBy(fDT,'ac').slice(0,12);
-  var basePie=countBy(fDT,'base').slice(0,15);
-  var levelPie=countBy(fDT,'level');
-  var riskPie=countBy(fDT,'risk');
-  var reasonPie=countBy(fDT,'reason').slice(0,10);
-  var critical=countBy(fDT,'critical');
-
-  document.getElementById('bc1').textContent=typePie.length+'类';
-  document.getElementById('bc2').textContent=basePie.length+'个';
-
-  donut('c1', typePie);
-  barH('c2', basePie);
-  donutRisk('c3', riskPie);
-  barV('c4', levelPie);
-  barH('c5', reasonPie);
-  donutCritical('c7', critical);
-
-  var days = [...new Set(DATA_FULL.map(function(x){return x.appr_date;}))].filter(Boolean).sort();
-  var allC={}, cabC={}, sysC={};
-  DATA_FULL.forEach(function(x){
-    var d=x.appr_date; if(!d) return;
-    allC[d]=(allC[d]||0)+1;
-    if(x.cabin==='客舱类') cabC[d]=(cabC[d]||0)+1; else sysC[d]=(sysC[d]||0)+1;
-  });
-  var trData = {
-    days: days,
-    series: [
-      {name:'全部', color:'#1890ff', data: days.map(function(d){return allC[d]||0;})},
-      {name:'客舱类', color:'#fa8c16', data: days.map(function(d){return cabC[d]||0;})},
-      {name:'系统类', color:'#52c41a', data: days.map(function(d){return sysC[d]||0;})}
-    ]
-  };
-  lineTrend('c0', trData);
-
-  rendT();
-}
-
 var COLORS=['#1890ff','#52c41a','#faad14','#ff4d4f','#722ed1','#13c2c2','#eb2f96','#f5222d','#2f4554','#61a0a8'];
 var RISK_COLOR={Overdue:'#ff4d4f', HighRisk:'#faad14', MidRisk:'#1890ff', Normal:'#52c41a', Unknown:'#bfbfbf'};
 var RISK_NAME={Overdue:'已超期', HighRisk:'高风险', MidRisk:'中风险', Normal:'正常'};
@@ -506,8 +247,6 @@ function barV(id, data){
     series:[{type:'bar', data:data.map(function(d){return {value:d.value, itemStyle:{color:COLORS[data.indexOf(d)%COLORS.length]}};}), barMaxWidth:28, label:{show:true, position:'top', color:'#595959',fontSize:11}}]
   },true);
 }
-
-function rC(v){ return v==='Overdue'?'risk-O':v==='HighRisk'?'risk-H':v==='MidRisk'?'risk-M':'risk-N'; }
 function lineTrend(id, data){
   if(!data || !data.days || !data.days.length) return getC(id).clear();
   var days=data.days, series=data.series;
@@ -525,104 +264,25 @@ function lineTrend(id, data){
   }, true);
 }
 function hexA(hex,a){ var n=parseInt(hex.slice(1),16); return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'; }
-function lB(v){ return '<span class="tag tag-'+v+'">'+v+'</span>'; }
-function yN(v){ return '<span class="'+(v==='是'?'yesno-y':'yesno-n')+'">'+v+'</span>'; }
-function tT(v){
-  if(!v) return '<span class="tag" style="background:#f5f5f5;color:#8c8c8c">-</span>';
-  if(v==='CDL') return '<span class="tag" style="background:#e6fffb;color:#08979c">CDL</span>';
-  if(v.indexOf('MEL')===0) return '<span class="tag" style="background:#fff0f6;color:#c41d7f">'+v+'</span>';
-  return '<span class="tag" style="background:#f5f5f5;color:#595959">'+v+'</span>';
-}
-function setSearch(v){
-  searchText = v.trim();
-  pg = 1; rendT();
-}
-function toggleSort(col){
-  if(sortCol === col){
-    if(sortDir === 1) sortDir = -1;
-    else { sortCol = null; sortDir = 1; }
-  } else {
-    sortCol = col; sortDir = 1;
-  }
-  pg = 1; rendT(); updateSortIndicators();
-}
-function updateSortIndicators(){
-  DETAIL_COLS.forEach(function(c){
-    var el = sortIndEls[c];
-    if(!el) return;
-    if(sortCol === c) el.textContent = sortDir===1 ? '↑' : '↓';
-    else el.textContent = '';
+function calcTrend(){
+  var days = [...new Set(DATA_FULL.map(function(x){return x.appr_date;}))].filter(Boolean).sort();
+  var allC={}, cabC={}, sysC={};
+  DATA_FULL.forEach(function(x){
+    var d=x.appr_date; if(!d) return;
+    allC[d]=(allC[d]||0)+1;
+    if(x.cabin==='客舱类') cabC[d]=(cabC[d]||0)+1; else sysC[d]=(sysC[d]||0)+1;
   });
+  return {
+    days: days,
+    series: [
+      {name:'全部', color:'#1890ff', data: days.map(function(d){return allC[d]||0;})},
+      {name:'客舱类', color:'#fa8c16', data: days.map(function(d){return cabC[d]||0;})},
+      {name:'系统类', color:'#52c41a', data: days.map(function(d){return sysC[d]||0;})}
+    ]
+  };
 }
-function getDetailRows(){
-  var list = filterBase(DATA_FULL);
-  if(searchText){
-    var low = searchText.toLowerCase();
-    list = list.filter(function(r){
-      for(var i=0;i<DETAIL_COLS.length;i++){
-        var v = r[DETAIL_COLS[i]];
-        if(v !== undefined && v !== null && String(v).toLowerCase().indexOf(low) >= 0) return true;
-      }
-      return false;
-    });
-  }
-  if(sortCol){
-    var dir = sortDir;
-    list = list.slice().sort(function(a,b){
-      var av = a[sortCol]||'', bv = b[sortCol]||'';
-      var na = parseFloat(av), nb = parseFloat(bv);
-      if(!isNaN(na) && !isNaN(nb) && isFinite(na) && isFinite(nb)) return dir*(na-nb);
-      return dir * String(av).localeCompare(String(bv), 'zh-CN');
-    });
-  }
-  return list;
-}
-function buildTH(){
-  var tr = document.getElementById('thr');
-  tr.innerHTML = '';
-  DETAIL_COLS.forEach(function(c){
-    var th = document.createElement('th');
-    th.textContent = c;
-    th.title = '点击排序';
-    var ind = document.createElement('span');
-    ind.className = 'sort-ind';
-    sortIndEls[c] = ind;
-    th.appendChild(ind);
-    th.onclick = function(){ toggleSort(c); };
-    tr.appendChild(th);
-  });
-}
-function cellHTML(col, v){
-  if(v===undefined || v===null) v='';
-  if(/是否/.test(col) && (v==='是'||v==='否')){
-    return '<td><span class="'+(v==='是'?'yesno-y':'yesno-n')+'">'+v+'</span></td>';
-  }
-  if(col==='保留故障单号'){ return '<td style="color:#1890ff;font-weight:600">'+v+'</td>'; }
-  return '<td>'+v+'</td>';
-}
-function rendT(){
-  var list = getDetailRows();
-  var n = DETAIL_COLS.length;
-  var total = list.length;
-  document.getElementById('tc').textContent = '共 '+total+' 条 · '+DETAIL_COLS.length+' 字段';
-  if(total===0){ document.getElementById('tb').innerHTML='<tr><td colspan="'+n+'" class="empty">无匹配数据</td></tr>'; document.getElementById('pg').innerHTML='<span>第 0 / 0 页</span>'; return; }
-  var s=(pg-1)*PS, rows=list.slice(s,s+PS);
-  document.getElementById('tb').innerHTML=rows.map(function(r){
-    var tds = DETAIL_COLS.map(function(c){ return cellHTML(c, r[c]); }).join('');
-    return '<tr>'+tds+'</tr>';
-  }).join('');
-  var tp=Math.max(1,Math.ceil(total/PS));
-  document.getElementById('pg').innerHTML='<span>第 '+pg+'/'+tp+' 页，共 '+total+' 条</span>'+
-    '<button '+(pg<=1?'disabled ':'')+'onclick="pg--;rendT()">上一页</button>'+
-    '<button '+(pg>=tp?'disabled ':'')+'onclick="pg++;rendT()">下一页</button>';
-}
-
 window.onload=function(){
-  buildDDs();
-  buildTH();
-  document.getElementById('ttip').textContent='表格支持上下滚动 + 左右拖动；点击表头排序，右上角输入框全局搜索；已显示 Excel 全部 '+DETAIL_COLS.length+' 个原始字段';
-  document.getElementById('d2').value=GEN_DATE;
-  fDT=[...DATA]; applyF();
+  lineTrend('c0', calcTrend());
 };
 window.onresize=function(){ Object.values(charts).forEach(function(c){ try{c.resize();}catch(e){} }); };
 </script>
