@@ -231,30 +231,32 @@ tbody tr:hover{background:#f5f5f5}
         <div class="hd"><div class="tt">每日保留趋势（按审批日期）</div><span class="badge">审批日期</span></div>
         <div class="chart" id="c0" style="height:300px"></div>
       </div>
-      <div class="card">
+      <div class="chart-grid">
+        <div class="card">
           <div class="hd"><div class="tt">机型分布</div><span class="badge" id="bc1">占比</span></div>
           <div class="chart-t" id="c1"></div>
         </div>
-      <div class="card">
+        <div class="card">
           <div class="hd"><div class="tt">指定机号单位分布</div><span class="badge" id="bc2">占比</span></div>
           <div class="chart-t" id="c2"></div>
         </div>
-      <div class="card">
+        <div class="card">
           <div class="hd"><div class="tt">超期风险分布</div><span class="badge">预警</span></div>
           <div class="chart-t" id="c3"></div>
         </div>
-      <div class="card">
+        <div class="card">
           <div class="hd"><div class="tt">保留类型分布</div><span class="badge">A=最高 D=最低</span></div>
           <div class="chart" id="c4"></div>
         </div>
-      <div class="card">
+        <div class="card">
           <div class="hd"><div class="tt">保留原因分布</div><span class="badge">原因</span></div>
           <div class="chart" id="c5"></div>
         </div>
-      <div class="card">
+        <div class="card">
           <div class="hd"><div class="tt">是否关键系统</div><span class="badge">是/否</span></div>
           <div class="chart" id="c7"></div>
         </div>
+      </div>
       <div class="card table-card">
         <div class="hd">
           <div class="tt">故障保留明细（全部原始字段）</div>
@@ -273,7 +275,7 @@ tbody tr:hover{background:#f5f5f5}
         <div class="pagination" id="pg"></div>
       </div>
     </div>
-    <div class="footer">维修计划辅助决策 — Generated 2026-08-12 14:04</div>
+    <div class="footer">维修计划辅助决策 — Generated 2026-08-12 14:11</div>
   </div>
 </div>
 
@@ -523,11 +525,11 @@ function refreshAll(){
   // ===== 按 config 顺序渲染图表块（gen.py 注入） =====
 lineTrend('c0', calcTrend());
 donut('c1', countBy(fDT,'ac').slice(0,12));
-barH('c2', countBy(fDT,'base').slice(0,15));
-donutRisk('c3', countBy(fDT,'risk'));
-barV('c4', countBy(fDT,'level'));
-barH('c5', countBy(fDT,'reason').slice(0,10));
-donutCritical('c7', countBy(fDT,'critical'));
+      barH('c2', countBy(fDT,'base').slice(0,15));
+      donutRisk('c3', countBy(fDT,'risk'));
+      barV('c4', countBy(fDT,'level'));
+      barH('c5', countBy(fDT,'reason').slice(0,10));
+      donutCritical('c7', countBy(fDT,'critical'));
 
   if(document.getElementById('tb')) rendT();
 }
