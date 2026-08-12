@@ -121,6 +121,8 @@ thead th:hover{background:#f0f0f0}
 tbody td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text);white-space:nowrap}
 .table-tip{font-size:12px;color:var(--text3);padding:10px 2px 0}
 .table-tools{display:flex;align-items:center;gap:8px}
+.fz-chk{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--text2);cursor:pointer;user-select:none;white-space:nowrap}
+.fz-chk input{cursor:pointer;width:14px;height:14px}
 .table-tools input{height:28px;border:1px solid var(--border);border-radius:4px;padding:0 8px;font-size:13px;color:var(--text);width:160px}
 .table-tools input:focus{outline:none;border-color:var(--primary)}
 .sort-ind{margin-left:4px;color:var(--primary);font-size:12px;font-weight:700}
@@ -261,7 +263,8 @@ tbody tr:hover{background:#f5f5f5}
         <div class="hd">
           <div class="tt">故障保留明细（全部原始字段）</div>
           <div class="table-tools">
-            <input type="text" id="tsearch" placeholder="全局搜索..." oninput="setSearch(this.value)">
+            <label class="fz-chk" title="勾选后按“包含”模糊匹配，不勾则按整单元格精准匹配"><input type="checkbox" id="fz" onchange="toggleFuzzy(this.checked)"> 模糊搜索</label>
+            <input type="text" id="tsearch" placeholder="精准搜索..." oninput="setSearch(this.value)">
             <span class="badge" id="tc">共 491 条</span>
           </div>
         </div>
@@ -275,7 +278,7 @@ tbody tr:hover{background:#f5f5f5}
         <div class="pagination" id="pg"></div>
       </div>
     </div>
-    <div class="footer">维修计划辅助决策 — Generated 2026-08-12 14:11</div>
+    <div class="footer">维修计划辅助决策 — Generated 2026-08-12 14:19</div>
   </div>
 </div>
 
@@ -380,7 +383,8 @@ function calcTrend(){
 }
 var pg = 1, PS = 12, fDT = [];
 var SEL = { ac:new Set(), base:new Set(), level:new Set(), risk:new Set(), cabin:new Set() };
-var searchText='', sortCol=null, sortDir=1;
+var searchText='', sortCol=null, sortDir=1, fuzzyMode=false;
+function toggleFuzzy(on){ fuzzyMode = !!on; pg = 1; rendT(); }
 var sortIndEls={};
 var FIELDS = [
   {key:'ac', field:'ac', label:'机型', ddid:'dd_ac', trig:'trig_ac'},
@@ -483,6 +487,7 @@ function resetF(){
   document.getElementById('d1').value='2026-01-01';
   document.getElementById('d2').value=GEN_DATE;
   document.getElementById('tsearch').value='';
+  if(document.getElementById('fz')){ document.getElementById('fz').checked=false; fuzzyMode=false; }
   searchText=''; sortCol=null; sortDir=1; updateSortIndicators();
   fDT=getFiltered(); pg=1; refreshAll();
   document.getElementById('fhint').textContent='已重置筛选';
@@ -562,7 +567,13 @@ function getDetailRows(){
     list = list.filter(function(r){
       for(var i=0;i<DETAIL_COLS.length;i++){
         var v = r[DETAIL_COLS[i]];
-        if(v !== undefined && v !== null && String(v).toLowerCase().indexOf(low) >= 0) return true;
+        if(v === undefined || v === null) continue;
+        var s = String(v);
+        if(fuzzyMode){
+          if(s.toLowerCase().indexOf(low) >= 0) return true;   // 模糊：包含即可
+        } else {
+          if(s.trim().toLowerCase() === low) return true;       // 精准：整单元格完全相等
+        }
       }
       return false;
     });
@@ -621,7 +632,7 @@ function rendT(){
 window.onload=function(){
   buildDDs();
   buildTH();
-  document.getElementById('ttip').textContent='表格支持上下滚动 + 左右拖动；点击表头排序，右上角输入框全局搜索；已显示 Excel 全部 '+DETAIL_COLS.length+' 个原始字段';
+  document.getElementById('ttip').textContent='表格支持上下滚动 + 左右拖动；点击表头排序，右上角输入框默认精准搜索（整单元格完全相等），勾选「模糊搜索」可改为包含匹配；已显示 Excel 全部 '+DETAIL_COLS.length+' 个原始字段';
   document.getElementById('d2').value=GEN_DATE;
   fDT=[...DATA]; applyF();
 };
