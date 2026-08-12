@@ -153,7 +153,7 @@ tbody tr:hover{background:#f5f5f5}
   <div class="logo">维修计划辅助决策</div>
   <div class="meta">
     <div>数据截止：<b>2026-08-12</b></div>
-    <div>总记录：<b id="meta-total">491</b> 条</div>
+    <div>总记录：<b id="meta-total">7242</b> 条</div>
   </div>
 </div>
 
@@ -167,7 +167,7 @@ tbody tr:hover{background:#f5f5f5}
     <div class="container">
       <div class="card">
         <div class="hd"><div class="tt">每日保留趋势（按审批日期）</div><span class="badge">审批日期</span></div>
-        <div class="chart" id="c0" style="height:420px"></div>
+        <div class="chart" id="c0" style="height:300px"></div>
       </div>
       <div class="card" style="margin-top:16px">
         <div class="hd"><div class="tt">数据概览</div><span class="badge">汇总</span></div>
@@ -179,7 +179,7 @@ tbody tr:hover{background:#f5f5f5}
         </div>
       </div>
     </div>
-    <div class="footer">维修计划辅助决策 — Generated 2026-08-12 12:10 — 数据源：故障保留.XLSX</div>
+    <div class="footer">维修计划辅助决策 — Generated 2026-08-12 13:04</div>
   </div>
 </div>
 
@@ -283,7 +283,8 @@ function calcTrend(){
   };
 }
 window.onload=function(){
-  lineTrend('c0', calcTrend());
+  // ===== 按 config(HOME_BLOCKS) 渲染首页图表块 =====
+lineTrend('c0', calcTrend());
 };
 window.onresize=function(){ Object.values(charts).forEach(function(c){ try{c.resize();}catch(e){} }); };
 </script>
