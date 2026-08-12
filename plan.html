@@ -180,7 +180,7 @@ tbody tr:hover{background:#f5f5f5}
       </div>
       <div class="card table-card">
         <div class="hd">
-          <div class="tt">JHKZPT 原始数据（全部字段）</div>
+          <div class="tt">计划控制平台（原始数据）</div>
           <div class="table-tools">
             <select class="fz-sel" id="pfzmode" onchange="pToggleFuzzy(this.value)" title="搜索方式：前缀 / 精准 / 模糊">
               <option value="prefix" selected>前缀</option>
@@ -200,7 +200,7 @@ tbody tr:hover{background:#f5f5f5}
         <div class="table-tip" id="pttip"></div>
       </div>
     </div>
-    <div class="footer">维修计划辅助决策 — Generated 2026-08-12 15:04</div>
+    <div class="footer">维修计划辅助决策 — Generated 2026-08-12 15:18</div>
   </div>
 </div>
 
@@ -382,10 +382,10 @@ window.onload=function(){
 barH('pc1', PLAN_STD_HOURS);
 barH('pddf', PLAN_DDF_COUNT);
 barH('pado', PLAN_ADO_COUNT);
-  // 明细表（JHKZPT 原始数据）
+  // 明细表（计划控制平台 原始数据）
   if(document.getElementById('ptb')){
     pBuildTH();
-    document.getElementById('pttip').textContent = '表格支持上下滚动 + 左右拖动；点击表头排序，右上角下拉可选搜索方式（默认前缀：字段开头匹配；精准：整单元格完全相等；模糊：包含匹配）；已显示 JHKZPT 全部 ' + PLAN_COLS.length + ' 个原始字段';
+    document.getElementById('pttip').textContent = '表格支持上下滚动 + 左右拖动；点击表头排序，右上角下拉可选搜索方式（默认前缀：字段开头匹配；精准：整单元格完全相等；模糊：包含匹配）；已显示 计划控制平台 全部 ' + PLAN_COLS.length + ' 个原始字段';
     pRendT();
   }
 };
