@@ -205,7 +205,6 @@ tbody tr:hover{background:#f5f5f5}
         </div>
       </div>
       <div class="filter-hint" id="fhint"></div>
-
       <div class="kpi-row">
         <div class="kpi-card k1">
           <div class="tit">总故障保留数</div>
@@ -228,42 +227,34 @@ tbody tr:hover{background:#f5f5f5}
           <div class="sub">正常 <span id="k_norm">423</span></div>
         </div>
       </div>
-
-      <div class="card" style="margin-bottom:16px">
+      <div class="card">
         <div class="hd"><div class="tt">每日保留趋势（按审批日期）</div><span class="badge">审批日期</span></div>
         <div class="chart" id="c0" style="height:300px"></div>
       </div>
-
-      <div class="chart-grid">
-        <div class="card">
+      <div class="card">
           <div class="hd"><div class="tt">机型分布</div><span class="badge" id="bc1">占比</span></div>
           <div class="chart-t" id="c1"></div>
         </div>
-        <div class="card">
+      <div class="card">
           <div class="hd"><div class="tt">指定机号单位分布</div><span class="badge" id="bc2">占比</span></div>
           <div class="chart-t" id="c2"></div>
         </div>
-        <div class="card">
+      <div class="card">
           <div class="hd"><div class="tt">超期风险分布</div><span class="badge">预警</span></div>
           <div class="chart-t" id="c3"></div>
         </div>
-      </div>
-
-      <div class="chart-grid">
-        <div class="card">
+      <div class="card">
           <div class="hd"><div class="tt">保留类型分布</div><span class="badge">A=最高 D=最低</span></div>
           <div class="chart" id="c4"></div>
         </div>
-        <div class="card">
+      <div class="card">
           <div class="hd"><div class="tt">保留原因分布</div><span class="badge">原因</span></div>
           <div class="chart" id="c5"></div>
         </div>
-        <div class="card">
+      <div class="card">
           <div class="hd"><div class="tt">是否关键系统</div><span class="badge">是/否</span></div>
           <div class="chart" id="c7"></div>
         </div>
-      </div>
-
       <div class="card table-card">
         <div class="hd">
           <div class="tt">故障保留明细（全部原始字段）</div>
@@ -282,7 +273,7 @@ tbody tr:hover{background:#f5f5f5}
         <div class="pagination" id="pg"></div>
       </div>
     </div>
-    <div class="footer">维修计划辅助决策 — Generated 2026-08-12 12:10 — 数据源：故障保留.XLSX</div>
+    <div class="footer">维修计划辅助决策 — Generated 2026-08-12 13:04</div>
   </div>
 </div>
 
@@ -510,13 +501,15 @@ function refreshAll(){
     if(x.risk==='Overdue') ov++; else if(x.risk==='HighRisk') hi++; else if(x.risk==='MidRisk') md++; else nm++;
     if(x.critical==='是') cr++;
   });
-  document.getElementById('k_total').textContent=total;
-  document.getElementById('k_avg').innerHTML=avg+'<small>h</small>';
-  document.getElementById('k_risk').innerHTML=ov+'<small>/</small><span style="font-size:22px" id="k_high">'+hi+'</span>';
-  document.getElementById('k_mid').textContent=md;
-  document.getElementById('k_crit').textContent=cr;
-  document.getElementById('k_norm').textContent=total-cr;
-  document.getElementById('meta-total').textContent=total;
+  if(document.getElementById('k_total')){
+    document.getElementById('k_total').textContent=total;
+    document.getElementById('k_avg').innerHTML=avg+'<small>h</small>';
+    document.getElementById('k_risk').innerHTML=ov+'<small>/</small><span style="font-size:22px" id="k_high">'+hi+'</span>';
+    document.getElementById('k_mid').textContent=md;
+    document.getElementById('k_crit').textContent=cr;
+    document.getElementById('k_norm').textContent=total-cr;
+  }
+  if(document.getElementById('meta-total')) document.getElementById('meta-total').textContent=total;
 
   var typePie=countBy(fDT,'ac').slice(0,12);
   var basePie=countBy(fDT,'base').slice(0,15);
@@ -524,20 +517,19 @@ function refreshAll(){
   var riskPie=countBy(fDT,'risk');
   var reasonPie=countBy(fDT,'reason').slice(0,10);
   var critical=countBy(fDT,'critical');
+  if(document.getElementById('bc1')) document.getElementById('bc1').textContent=typePie.length+'类';
+  if(document.getElementById('bc2')) document.getElementById('bc2').textContent=basePie.length+'个';
 
-  document.getElementById('bc1').textContent=typePie.length+'类';
-  document.getElementById('bc2').textContent=basePie.length+'个';
+  // ===== 按 config 顺序渲染图表块（gen.py 注入） =====
+lineTrend('c0', calcTrend());
+donut('c1', countBy(fDT,'ac').slice(0,12));
+barH('c2', countBy(fDT,'base').slice(0,15));
+donutRisk('c3', countBy(fDT,'risk'));
+barV('c4', countBy(fDT,'level'));
+barH('c5', countBy(fDT,'reason').slice(0,10));
+donutCritical('c7', countBy(fDT,'critical'));
 
-  donut('c1', typePie);
-  barH('c2', basePie);
-  donutRisk('c3', riskPie);
-  barV('c4', levelPie);
-  barH('c5', reasonPie);
-  donutCritical('c7', critical);
-
-  lineTrend('c0', calcTrend());
-
-  rendT();
+  if(document.getElementById('tb')) rendT();
 }
 
 function setSearch(v){
@@ -611,7 +603,7 @@ function rendT(){
   var list = getDetailRows();
   var n = DETAIL_COLS.length;
   var total = list.length;
-  document.getElementById('tc').textContent = '共 '+total+' 条 · '+DETAIL_COLS.length+' 字段';
+  if(document.getElementById('tc')) document.getElementById('tc').textContent = '共 '+total+' 条 · '+DETAIL_COLS.length+' 字段';
   if(total===0){ document.getElementById('tb').innerHTML='<tr><td colspan="'+n+'" class="empty">无匹配数据</td></tr>'; document.getElementById('pg').innerHTML='<span>第 0 / 0 页</span>'; return; }
   var s=(pg-1)*PS, rows=list.slice(s,s+PS);
   document.getElementById('tb').innerHTML=rows.map(function(r){
